@@ -7,17 +7,20 @@ export default function WingsForm() {
   const [formData, setFormData] = useState({
     surface: "Air Fryer",
     tempStyle: "Knob",
+    weightMode: "total",
     weightValue: "",
     weightUnit: "g",
     wingSize: "Medium",
     doneness: "Crispy",
     preSeasoned: "No",
+    wingCount: "",
   });
 
   const [instructions, setInstructions] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [weightMode, setWeightMode] = useState("total"); // or "perWing"
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,29 +97,103 @@ export default function WingsForm() {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-sm font-medium mb-1">Wing Weight</label>
-          <div className="weight-row">
-            <input
-              type="number"
-              name="weightValue"
-              value={formData.weightValue}
-              onChange={handleChange}
-              placeholder="Enter weight"
-              min="0"
-            />
-            <select
-              name="weightUnit"
-              value={formData.weightUnit}
-              onChange={handleChange}
-            >
-              <option value="g">g</option>
-              <option value="oz">oz</option>
-              <option value="kg">kg</option>
-              <option value="lbs">lbs</option>
-            </select>
+          <label className="text-sm font-medium mb-1">
+            How would you like to enter weight?
+          </label>
+          <div className="radio-group">
+            <label className="radio-label">
+              <input
+                type="radio"
+                name="weightMode"
+                value="total"
+                checked={weightMode === "total"}
+                onChange={() => setWeightMode("total")}
+              />
+              Total Wings Weight
+            </label>
+            <label className="radio-label">
+              <input
+                type="radio"
+                name="weightMode"
+                value="perWing"
+                checked={weightMode === "perWing"}
+                onChange={() => setWeightMode("perWing")}
+              />
+              Individual Wing Weight × Count
+            </label>
           </div>
         </div>
 
+        {weightMode === "total" ? (
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">
+              Total Wings Weight
+            </label>
+            <div className="weight-row">
+              <input
+                type="number"
+                name="weightValue"
+                value={formData.weightValue}
+                onChange={handleChange}
+                placeholder="e.g. 500"
+                min="0"
+              />
+              <select
+                name="weightUnit"
+                value={formData.weightUnit}
+                onChange={handleChange}
+              >
+                <option value="g">g</option>
+                <option value="oz">oz</option>
+                <option value="kg">kg</option>
+                <option value="lbs">lbs</option>
+              </select>
+            </div>
+            <small className="helper-text">
+              Based on the total amount you’ll cook at once on the{" "}
+              {formData.surface}.
+            </small>
+          </div>
+        ) : (
+          <>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">
+                Individual Wing Weight
+              </label>
+              <div className="weight-row">
+                <input
+                  type="number"
+                  name="weightValue"
+                  value={formData.weightValue}
+                  onChange={handleChange}
+                  placeholder="e.g. 100"
+                  min="0"
+                />
+                <select
+                  name="weightUnit"
+                  value={formData.weightUnit}
+                  onChange={handleChange}
+                >
+                  <option value="g">g</option>
+                  <option value="oz">oz</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">
+                Number of Wings
+              </label>
+              <input
+                type="number"
+                name="wingCount"
+                value={formData.wingCount || ""}
+                onChange={handleChange}
+                placeholder="e.g. 6"
+                min="1"
+              />
+            </div>
+          </>
+        )}
         <div className="flex flex-col">
           <label className="text-sm font-medium mb-1">Wing Size</label>
           <select

@@ -69,9 +69,9 @@ function isValidForm(formData) {
     const requiredFields = [
       "surface",
       "tempStyle",
+      "weightMode",
       "weightValue",
       "weightUnit",
-      "wingSize",
       "doneness",
       "preSeasoned",
     ];
@@ -79,6 +79,23 @@ function isValidForm(formData) {
       if (!formData[field] || formData[field].toString().trim() === "")
         return false;
     }
+
+    if (formData.weightMode === "perWing") {
+      if (
+        !formData.wingCount ||
+        isNaN(parseInt(formData.wingCount)) ||
+        parseInt(formData.wingCount) <= 0
+      ) {
+        return false;
+      }
+    }
+
+    if (formData.weightMode === "total") {
+      if (!formData.wingSize || formData.wingSize.toString().trim() === "") {
+        return false;
+      }
+    }
+
     if (isNaN(parseFloat(formData.weightValue))) return false;
 
     return true;
@@ -94,7 +111,6 @@ export async function getCachedInstructions(formData) {
   }
 
   const cut = normalizeCut(formData);
-
   const q = query(
     collectionRef,
     where("type", "==", formData.type),
@@ -102,7 +118,18 @@ export async function getCachedInstructions(formData) {
     where("tempStyle", "==", formData.tempStyle),
     where("cut", "==", cut),
     where("doneness", "==", formData.doneness),
-    where("pan", "==", formData.surface === "Stove" ? formData.pan : "")
+    where("pan", "==", formData.surface === "Stove" ? formData.pan : ""),
+    where("weightMode", "==", formData.weightMode || "total"),
+    where(
+      "wingSize",
+      "==",
+      formData.weightMode === "total" ? formData.wingSize || "" : ""
+    ),
+    where(
+      "wingCount",
+      "==",
+      formData.weightMode === "perWing" ? formData.wingCount || "" : ""
+    )
   );
 
   const snapshot = await getDocs(q);
@@ -158,11 +185,15 @@ export async function cacheInstructions(formData, instructions) {
     type: formData.type,
     surface: formData.surface,
     tempStyle: formData.tempStyle,
+    weightMode: formData.weightMode || "total",
     weightValue: formData.weightValue,
     weightUnit: formData.weightUnit,
     cut,
     doneness: formData.doneness,
     pan: formData.surface === "Stove" ? formData.pan : "",
+    wingSize: formData.weightMode === "total" ? formData.wingSize || "" : "",
+    wingCount:
+      formData.weightMode === "perWing" ? formData.wingCount || "" : "",
     instructions,
     createdAt: new Date(),
   });

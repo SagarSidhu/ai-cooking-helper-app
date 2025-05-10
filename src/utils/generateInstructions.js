@@ -43,20 +43,40 @@ Be clear and concise.`;
 }
 
 export async function generateWingsInstructions(formData) {
-  const cached = await getCachedInstructions({ ...formData, type: "wings" });
-  if (cached) return cached;
-
   const {
     surface,
     tempStyle,
     weightValue,
     weightUnit,
+    weightMode,
     wingSize,
+    wingCount,
     doneness,
     preSeasoned,
   } = formData;
-  const prompt = `You're a helpful cooking assistant. Provide clear, beginner-friendly, step-by-step instructions for cooking ${weightValue}${weightUnit} of ${wingSize?.toLowerCase?.()} chicken wings using a ${surface}.
-Aim for a ${doneness?.toLowerCase?.()} finish. Use temperature style: ${tempStyle}.
+
+  // Add to cache key
+  const cacheKey = {
+    ...formData,
+    type: "wings",
+    weightMode,
+    wingSize: weightMode === "total" ? wingSize : "",
+    wingCount: weightMode === "perWing" ? wingCount : "",
+  };
+
+  const cached = await getCachedInstructions(cacheKey);
+  if (cached) return cached;
+
+  // Build prompt
+  let wingDescription = "";
+  if (weightMode === "perWing") {
+    wingDescription = `${wingCount} wings, each weighing ${weightValue}${weightUnit}`;
+  } else {
+    wingDescription = `${weightValue}${weightUnit} of ${wingSize.toLowerCase()} wings`;
+  }
+
+  const prompt = `You're a helpful cooking assistant. Provide clear, beginner-friendly, step-by-step instructions for cooking ${wingDescription} using a ${surface}.
+Aim for a ${doneness.toLowerCase()} finish. Use temperature style: ${tempStyle}.
 Wings are ${preSeasoned === "Yes" ? "already seasoned" : "not pre-seasoned, so include basic seasoning"}.
 
 Be practical and concise.`;
@@ -68,7 +88,7 @@ Be practical and concise.`;
       temperature: 0.7,
     });
     const result = response.choices[0].message.content.trim();
-    await cacheInstructions({ ...formData, type: "wings" }, result);
+    await cacheInstructions(cacheKey, result);
     return result;
   } catch (err) {
     console.error("OpenAI Error:", err);
