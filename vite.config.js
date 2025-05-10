@@ -7,4 +7,8 @@ export default defineConfig({
   optimizeDeps: {
     include: ["firebase/app", "firebase/firestore"],
   },
+  test: {
+    globals: true,
+    environment: "jsdom",
+  },
 });
