@@ -9,6 +9,7 @@ export default function Main() {
     weightValue: "",
     weightUnit: "g",
     cut: "Striploin",
+    customCut: "",
     doneness: "Medium",
     pan: "Cast Iron",
   });
@@ -144,50 +145,67 @@ export default function Main() {
             {/* Cut */}
             <div className="flex flex-col">
               <label className="text-sm font-medium mb-1">Steak Cut</label>
-              <select
-                name="cut"
-                value={formData.cut}
-                onChange={handleChange}
-                className="p-2 text-black rounded"
-              >
-                <option>Striploin</option>
-                <option>Sirloin</option>
-                <option>Ribeye</option>
-                <option>Tenderloin</option>
-              </select>
+              <div className="select-wrapper">
+                <select name="cut" value={formData.cut} onChange={handleChange}>
+                  <option>Striploin</option>
+                  <option>Sirloin</option>
+                  <option>Ribeye</option>
+                  <option>Tenderloin</option>
+                  <option>Porterhouse</option>
+                  <option>Flank</option>
+                  <option>Skirt</option>
+                  <option>Hanger</option>
+                  <option>Flat Iron</option>
+                  <option>Tri-Tip</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              {formData.cut === "Other" && (
+                <input
+                  type="text"
+                  name="customCut"
+                  value={formData.customCut}
+                  onChange={handleChange}
+                  className="mt-2 p-2 text-black rounded"
+                  placeholder="Enter custom steak cut"
+                />
+              )}
             </div>
 
             {/* Doneness */}
             <div className="flex flex-col">
               <label className="text-sm font-medium mb-1">Doneness Level</label>
-              <select
-                name="doneness"
-                value={formData.doneness}
-                onChange={handleChange}
-                className="p-2 text-black rounded"
-              >
-                <option>Rare</option>
-                <option>Medium Rare</option>
-                <option>Medium</option>
-                <option>Medium Well</option>
-                <option>Well Done</option>
-              </select>
+              <div className="select-wrapper">
+                <select
+                  name="doneness"
+                  value={formData.doneness}
+                  onChange={handleChange}
+                >
+                  <option>Rare</option>
+                  <option>Medium Rare</option>
+                  <option>Medium</option>
+                  <option>Medium Well</option>
+                  <option>Well Done</option>
+                </select>
+              </div>
             </div>
 
             {/* Pan (only if using Stove) */}
             {formData.surface === "Stove" && (
               <div className="flex flex-col">
                 <label className="text-sm font-medium mb-1">Pan Type</label>
-                <select
-                  name="pan"
-                  value={formData.pan}
-                  onChange={handleChange}
-                  className="p-2 text-black rounded"
-                >
-                  <option>Cast Iron</option>
-                  <option>Non-stick</option>
-                  <option>Stainless Steel</option>
-                </select>
+                <div className="select-wrapper">
+                  <select
+                    name="pan"
+                    value={formData.pan}
+                    onChange={handleChange}
+                  >
+                    <option>Cast Iron</option>
+                    <option>Non-stick</option>
+                    <option>Stainless Steel</option>
+                  </select>
+                </div>
               </div>
             )}
           </div>
@@ -195,7 +213,7 @@ export default function Main() {
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition"
+            className="generate-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition"
           >
             {loading ? "🔥 Generating..." : "Generate Instructions"}
           </button>

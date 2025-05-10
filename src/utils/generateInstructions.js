@@ -8,9 +8,10 @@ const openai = new OpenAI({
 export async function generateCookingInstructions(formData) {
   const { surface, tempStyle, weight, cut, doneness, pan } = formData;
   const combinedWeight = `${formData.weightValue} ${formData.weightUnit}`;
+  const steakCut = formData.cut === "Other" ? formData.customCut : formData.cut;
 
   const prompt = `
-You're a helpful cooking assistant. Provide beginner-friendly, step-by-step instructions for cooking a ${combinedWeight} ${cut} steak on a ${surface}, aiming for ${doneness} doneness.
+You're a helpful cooking assistant. Provide beginner-friendly, step-by-step instructions for cooking a ${combinedWeight} ${steakCut} steak on a ${surface}, aiming for ${doneness} doneness.
 Temperature guidance style: ${tempStyle}.
 ${surface === "Stove" ? `Pan type: ${pan}.` : ""}
 
