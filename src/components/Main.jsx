@@ -6,7 +6,8 @@ export default function Main() {
   const [formData, setFormData] = useState({
     surface: "Stove",
     tempStyle: "Knob",
-    weight: "",
+    weightValue: "",
+    weightUnit: "g",
     cut: "Striploin",
     doneness: "Medium",
     pan: "Cast Iron",
@@ -117,17 +118,27 @@ export default function Main() {
 
             {/* Weight */}
             <div className="flex flex-col">
-              <label className="text-sm font-medium mb-1">
-                Steak Weight (e.g. 340g)
-              </label>
-              <input
-                type="text"
-                name="weight"
-                value={formData.weight}
-                onChange={handleChange}
-                className="p-2 text-black rounded"
-                placeholder="Enter weight"
-              />
+              <label className="text-sm font-medium mb-1">Steak Weight</label>
+              <div className="weight-row">
+                <input
+                  type="number"
+                  name="weightValue"
+                  value={formData.weightValue}
+                  onChange={handleChange}
+                  placeholder="Enter weight"
+                  min="0"
+                />
+                <select
+                  name="weightUnit"
+                  value={formData.weightUnit}
+                  onChange={handleChange}
+                >
+                  <option value="g">g</option>
+                  <option value="oz">oz</option>
+                  <option value="kg">kg</option>
+                  <option value="lbs">lbs</option>
+                </select>
+              </div>
             </div>
 
             {/* Cut */}

@@ -130,3 +130,24 @@ button:hover {
   color: #666;
   margin-bottom: 0.5rem;
 }
+
+.weight-row {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 280px;
+}
+
+.weight-row input[type="number"],
+.weight-row select {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.weight-row input[type="number"] {
+  flex: 2;
+}
+
+.weight-row select {
+  flex: 1;
+}
