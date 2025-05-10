@@ -13,23 +13,23 @@ export default function Main() {
           <div className="mx-auto w-full max-w-xl space-y-6">
             <h1 className="text-4xl font-bold text-center">Cooking Helper</h1>
 
-            <div className="flex justify-center gap-4 mb-6">
+            {/* Tab Buttons */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "0.75rem",
+                marginBottom: "1.5rem",
+              }}
+            >
               <button
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
-                  activeTab === "steak"
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-300 text-black"
-                }`}
+                className={`tab-button ${activeTab === "steak" ? "active" : "inactive"}`}
                 onClick={() => setActiveTab("steak")}
               >
                 Steak
               </button>
               <button
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
-                  activeTab === "wings"
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-300 text-black"
-                }`}
+                className={`tab-button ${activeTab === "wings" ? "active" : "inactive"}`}
                 onClick={() => setActiveTab("wings")}
               >
                 Chicken Wings
