@@ -1,42 +1,108 @@
+// firestoreCache.js
 import { db } from "../firebase";
 import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 
 const collectionRef = collection(db, "cookingInstructions");
+const logsRef = collection(db, "instructionLogs");
 
-function createKey(data) {
-  const keyData = {
-    surface: data.surface,
-    tempStyle: data.tempStyle,
-    weightValue: data.weightValue,
-    weightUnit: data.weightUnit,
-    cut: data.cut === "Other" ? data.customCut : data.cut,
-    doneness: data.doneness,
-    pan: data.surface === "Stove" ? data.pan : "",
-  };
-  return JSON.stringify(keyData);
+function normalizeCut(formData) {
+  return formData.cut === "Other"
+    ? formData.customCut.trim().toLowerCase()
+    : formData.cut.toLowerCase();
+}
+
+function toGrams(value, unit) {
+  const v = parseFloat(value);
+  switch (unit) {
+    case "g":
+      return v;
+    case "kg":
+      return v * 1000;
+    case "oz":
+      return v * 28.3495;
+    case "lbs":
+      return v * 453.592;
+    default:
+      return v;
+  }
+}
+
+function getWeightTolerance(weightGrams) {
+  if (weightGrams <= 500) return 10;
+  if (weightGrams <= 1000) return 25;
+  return 50;
 }
 
 export async function getCachedInstructions(formData) {
-  const key = createKey(formData);
-  const q = query(collectionRef, where("key", "==", key));
-  const snapshot = await getDocs(q);
+  const cut = normalizeCut(formData);
 
-  if (!snapshot.empty) {
-    return snapshot.docs[0].data().instructions;
+  const q = query(
+    collectionRef,
+    where("surface", "==", formData.surface),
+    where("tempStyle", "==", formData.tempStyle),
+    where("cut", "==", cut),
+    where("doneness", "==", formData.doneness),
+    where("pan", "==", formData.surface === "Stove" ? formData.pan : "")
+  );
+
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) {
+    await addDoc(logsRef, {
+      status: "miss",
+      matchType: "none",
+      formData,
+      timestamp: new Date(),
+    });
+    return null;
   }
-  return null;
+
+  const weightGrams = toGrams(formData.weightValue, formData.weightUnit);
+  const tolerance = getWeightTolerance(weightGrams);
+
+  let bestMatch = null;
+  let closestDiff = Infinity;
+  let matchType = "none";
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const cachedWeight = toGrams(data.weightValue, data.weightUnit);
+    const diff = Math.abs(cachedWeight - weightGrams);
+
+    if (diff === 0) {
+      bestMatch = data.instructions;
+      closestDiff = 0;
+      matchType = "exact";
+    } else if (diff <= tolerance && diff < closestDiff) {
+      bestMatch = data.instructions;
+      closestDiff = diff;
+      matchType = "close";
+    }
+  });
+
+  await addDoc(logsRef, {
+    status: bestMatch ? "hit" : "miss",
+    matchType,
+    formData,
+    timestamp: new Date(),
+  });
+
+  return bestMatch;
 }
 
 export async function cacheInstructions(formData, instructions) {
-  const key = createKey(formData);
-  const q = query(collectionRef, where("key", "==", key));
-  const snapshot = await getDocs(q);
+  const cut = normalizeCut(formData);
+  const existing = await getCachedInstructions(formData);
+  if (existing) return;
 
-  if (snapshot.empty) {
-    await addDoc(collectionRef, {
-      key,
-      instructions,
-      createdAt: new Date(),
-    });
-  }
+  await addDoc(collectionRef, {
+    surface: formData.surface,
+    tempStyle: formData.tempStyle,
+    weightValue: formData.weightValue,
+    weightUnit: formData.weightUnit,
+    cut,
+    doneness: formData.doneness,
+    pan: formData.surface === "Stove" ? formData.pan : "",
+    instructions,
+    createdAt: new Date(),
+  });
 }
