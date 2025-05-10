@@ -2,8 +2,8 @@ body {
   font-family: system-ui, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #1a1a1a;
-  color: white;
+  background-color: #f8f8f8;
+  color: #222;
   line-height: 1.6;
 }
 
@@ -17,28 +17,50 @@ h1 {
   text-align: center;
   font-size: 2rem;
   margin-bottom: 1.5rem;
+  color: #333;
 }
 
 form {
-  background: #2c2c2c;
+  background: white;
   padding: 2rem;
   border-radius: 10px;
   display: grid;
   gap: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 label {
   display: block;
   margin-bottom: 0.25rem;
   font-weight: bold;
+  color: #444;
 }
 
 select,
-input {
+input[type="text"] {
   width: 100%;
   padding: 0.5rem;
   border-radius: 5px;
-  border: none;
+  border: 1px solid #ccc;
+}
+
+input[type="radio"] {
+  accent-color: #4caf50;
+  cursor: pointer;
+}
+
+.radio-group {
+  display: flex;
+  gap: 1.5rem;
+  padding-top: 0.25rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: normal;
+  color: #333;
 }
 
 button {
@@ -49,6 +71,7 @@ button {
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 1rem;
 }
 
 button:hover {
@@ -56,9 +79,11 @@ button:hover {
 }
 
 .output {
-  background: #333;
+  background: #fff;
+  color: #333;
   padding: 1.5rem;
   margin-top: 2rem;
   border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
   white-space: pre-wrap;
 }

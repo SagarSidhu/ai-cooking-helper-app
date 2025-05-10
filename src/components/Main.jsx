@@ -33,9 +33,7 @@ export default function Main() {
   return (
     <div className="min-h-screen bg-black text-white py-10 px-4">
       <div className="max-w-3xl mx-auto space-y-6">
-        <h1 className="text-4xl font-bold text-center">
-          🥩 Steak Cooking Helper
-        </h1>
+        <h1 className="text-4xl font-bold text-center">Cooking Helper</h1>
 
         <div className="bg-gray-900 p-6 rounded-2xl shadow space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -44,15 +42,28 @@ export default function Main() {
               <label className="text-sm font-medium mb-1">
                 Cooking Surface
               </label>
-              <select
-                name="surface"
-                value={formData.surface}
-                onChange={handleChange}
-                className="p-2 text-black rounded"
-              >
-                <option>Stove</option>
-                <option>BBQ</option>
-              </select>
+              <div className="radio-group">
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="surface"
+                    value="Stove"
+                    checked={formData.surface === "Stove"}
+                    onChange={handleChange}
+                  />
+                  Stove
+                </label>
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name="surface"
+                    value="BBQ"
+                    checked={formData.surface === "BBQ"}
+                    onChange={handleChange}
+                  />
+                  BBQ
+                </label>
+              </div>
             </div>
 
             {/* Temp Style */}
