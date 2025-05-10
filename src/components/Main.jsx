@@ -1,3 +1,4 @@
+// Main.jsx
 import { useState } from "react";
 import { generateCookingInstructions } from "../utils/generateInstructions";
 import ResultsModal from "../components/ResultsModal";
@@ -35,8 +36,8 @@ export default function Main() {
   return (
     <div className="center-wrapper">
       <div className="form-box">
-        <div className="min-h-screen bg-black text-white py-10 px-4">
-          <div className="max-w-3xl mx-auto space-y-6">
+        <div className="min-h-screen bg-gray-50 text-black py-10 px-4">
+          <div className="mx-auto w-full max-w-xl space-y-6">
             <h1 className="text-4xl font-bold text-center">Cooking Helper</h1>
 
             <div className="bg-gray-900 p-6 rounded-2xl shadow space-y-6">
@@ -170,7 +171,6 @@ export default function Main() {
                       <option value="Other">Other</option>
                     </select>
                   </div>
-
                   {formData.cut === "Other" && (
                     <input
                       type="text"

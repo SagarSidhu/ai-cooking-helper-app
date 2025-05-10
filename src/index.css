@@ -1,16 +1,11 @@
 body {
   font-family: system-ui, sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 1rem;
   background-color: #f8f8f8;
   color: #222;
   line-height: 1.6;
-}
-
-.container {
-  max-width: 720px;
-  margin: auto;
-  padding: 2rem;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -18,15 +13,6 @@ h1 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
   color: #333;
-}
-
-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  display: grid;
-  gap: 1rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 label {
@@ -186,9 +172,11 @@ button:hover {
 .center-wrapper {
   display: flex;
   justify-content: center;
+  padding: 1rem;
 }
 
 .form-box {
   width: 100%;
   max-width: 640px;
+  box-sizing: border-box;
 }
