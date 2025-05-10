@@ -182,3 +182,13 @@ button:hover {
 .generate-btn {
   margin-top: 1rem;
 }
+
+.center-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.form-box {
+  width: 100%;
+  max-width: 640px;
+}
