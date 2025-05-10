@@ -100,28 +100,27 @@ export default function WingsForm() {
           <label className="text-sm font-medium mb-1">
             How would you like to enter weight?
           </label>
-          <div className="radio-group">
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="weightMode"
-                value="total"
-                checked={weightMode === "total"}
-                onChange={() => setWeightMode("total")}
-              />
-              Total Wings Weight
-            </label>
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="weightMode"
-                value="perWing"
-                checked={weightMode === "perWing"}
-                onChange={() => setWeightMode("perWing")}
-              />
-              Individual Wing Weight × Count
-            </label>
-          </div>
+          <input
+            type="radio"
+            name="weightMode"
+            value="total"
+            checked={weightMode === "total"}
+            onChange={() => {
+              setWeightMode("total");
+              setFormData((prev) => ({ ...prev, weightMode: "total" }));
+            }}
+          />
+
+          <input
+            type="radio"
+            name="weightMode"
+            value="perWing"
+            checked={weightMode === "perWing"}
+            onChange={() => {
+              setWeightMode("perWing");
+              setFormData((prev) => ({ ...prev, weightMode: "perWing" }));
+            }}
+          />
         </div>
 
         {weightMode === "total" ? (
