@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { generateCookingInstructions } from "../utils/generateInstructions";
+import ResultsModal from "../components/ResultsModal";
 
 export default function Main() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export default function Main() {
 
   const [instructions, setInstructions] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,112 +23,147 @@ export default function Main() {
 
   const handleGenerate = async () => {
     setLoading(true);
+    setInstructions("");
     const result = await generateCookingInstructions(formData);
     setInstructions(result);
     setLoading(false);
+    setShowModal(true);
   };
 
   return (
-    <div className="grid gap-4 max-w-md mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Steak Cooking Helper</h1>
+    <div className="min-h-screen bg-black text-white py-10 px-4">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <h1 className="text-4xl font-bold text-center">
+          🥩 Steak Cooking Helper
+        </h1>
 
-      <label>
-        Cooking Surface
-        <select
-          name="surface"
-          value={formData.surface}
-          onChange={handleChange}
-          className="w-full p-2 mt-1 text-black rounded"
-        >
-          <option>Stove</option>
-          <option>BBQ</option>
-        </select>
-      </label>
+        <div className="bg-gray-900 p-6 rounded-2xl shadow space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Surface */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">
+                Cooking Surface
+              </label>
+              <select
+                name="surface"
+                value={formData.surface}
+                onChange={handleChange}
+                className="p-2 text-black rounded"
+              >
+                <option>Stove</option>
+                <option>BBQ</option>
+              </select>
+            </div>
 
-      <label>
-        Temperature Tips
-        <select
-          name="tempStyle"
-          value={formData.tempStyle}
-          onChange={handleChange}
-          className="w-full p-2 mt-1 text-black rounded"
-        >
-          <option value="Knob">Low / Medium / High</option>
-          <option value="Exact">Exact Temp (°F or °C)</option>
-        </select>
-      </label>
+            {/* Temp Style */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">
+                Temperature Tips
+              </label>
+              <select
+                name="tempStyle"
+                value={formData.tempStyle}
+                onChange={handleChange}
+                className="p-2 text-black rounded"
+              >
+                <option value="Knob">Low / Medium / High</option>
+                <option value="Exact">Exact Temp (°F or °C)</option>
+              </select>
+            </div>
 
-      <label>
-        Steak Weight (e.g. 340g)
-        <input
-          type="text"
-          name="weight"
-          value={formData.weight}
-          onChange={handleChange}
-          className="w-full p-2 mt-1 text-black rounded"
-        />
-      </label>
+            {/* Weight */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">
+                Steak Weight (e.g. 340g)
+              </label>
+              <input
+                type="text"
+                name="weight"
+                value={formData.weight}
+                onChange={handleChange}
+                className="p-2 text-black rounded"
+                placeholder="Enter weight"
+              />
+            </div>
 
-      <label>
-        Steak Cut
-        <select
-          name="cut"
-          value={formData.cut}
-          onChange={handleChange}
-          className="w-full p-2 mt-1 text-black rounded"
-        >
-          <option>Striploin</option>
-          <option>Sirloin</option>
-          <option>Ribeye</option>
-          <option>Tenderloin</option>
-        </select>
-      </label>
+            {/* Cut */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">Steak Cut</label>
+              <select
+                name="cut"
+                value={formData.cut}
+                onChange={handleChange}
+                className="p-2 text-black rounded"
+              >
+                <option>Striploin</option>
+                <option>Sirloin</option>
+                <option>Ribeye</option>
+                <option>Tenderloin</option>
+              </select>
+            </div>
 
-      <label>
-        Doneness Level
-        <select
-          name="doneness"
-          value={formData.doneness}
-          onChange={handleChange}
-          className="w-full p-2 mt-1 text-black rounded"
-        >
-          <option>Rare</option>
-          <option>Medium Rare</option>
-          <option>Medium</option>
-          <option>Medium Well</option>
-          <option>Well Done</option>
-        </select>
-      </label>
+            {/* Doneness */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium mb-1">Doneness Level</label>
+              <select
+                name="doneness"
+                value={formData.doneness}
+                onChange={handleChange}
+                className="p-2 text-black rounded"
+              >
+                <option>Rare</option>
+                <option>Medium Rare</option>
+                <option>Medium</option>
+                <option>Medium Well</option>
+                <option>Well Done</option>
+              </select>
+            </div>
 
-      {formData.surface === "Stove" && (
-        <label>
-          Pan Type
-          <select
-            name="pan"
-            value={formData.pan}
-            onChange={handleChange}
-            className="w-full p-2 mt-1 text-black rounded"
+            {/* Pan (only if using Stove) */}
+            {formData.surface === "Stove" && (
+              <div className="flex flex-col">
+                <label className="text-sm font-medium mb-1">Pan Type</label>
+                <select
+                  name="pan"
+                  value={formData.pan}
+                  onChange={handleChange}
+                  className="p-2 text-black rounded"
+                >
+                  <option>Cast Iron</option>
+                  <option>Non-stick</option>
+                  <option>Stainless Steel</option>
+                </select>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition"
           >
-            <option>Cast Iron</option>
-            <option>Non-stick</option>
-            <option>Stainless Steel</option>
-          </select>
-        </label>
-      )}
+            {loading ? "🔥 Generating..." : "Generate Instructions"}
+          </button>
 
-      <button
-        onClick={handleGenerate}
-        disabled={loading}
-        className="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded"
-      >
-        {loading ? "Generating..." : "Generate Instructions"}
-      </button>
-
-      {instructions && (
-        <div className="mt-6 whitespace-pre-wrap bg-gray-800 p-4 rounded-lg">
-          {instructions}
+          {showModal && (
+            <ResultsModal onClose={() => setShowModal(false)}>
+              <h2 style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>
+                🍽 Cooking Instructions
+              </h2>
+              <div>
+                {instructions
+                  .split(/\d+\.\s/)
+                  .filter(Boolean)
+                  .map((step, i) => (
+                    <p key={i}>
+                      <strong>Step {i + 1}:</strong> {step.trim()}
+                    </p>
+                  ))}
+              </div>
+            </ResultsModal>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
