@@ -18,13 +18,50 @@ export default function Main() {
   const [instructions, setInstructions] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const isValidForm = () => {
+    const requiredFields = [
+      "surface",
+      "tempStyle",
+      "weightValue",
+      "weightUnit",
+      "cut",
+      "doneness",
+    ];
+    for (const field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === "")
+        return false;
+    }
+    if (
+      formData.cut === "Other" &&
+      (!formData.customCut || formData.customCut.trim() === "")
+    )
+      return false;
+    if (
+      formData.surface === "Stove" &&
+      (!formData.pan || formData.pan.trim() === "")
+    )
+      return false;
+    if (isNaN(parseFloat(formData.weightValue))) return false;
+
+    return true;
+  };
+
   const handleGenerate = async () => {
+    if (!isValidForm()) {
+      setErrorMessage(
+        "Please fill in all fields correctly. Weight must be a number."
+      );
+      return;
+    }
+
+    setErrorMessage("");
     setLoading(true);
     setInstructions("");
     const result = await generateCookingInstructions(formData);
@@ -221,6 +258,12 @@ export default function Main() {
                   </div>
                 )}
               </div>
+
+              {errorMessage && (
+                <div className="text-red-600 font-semibold text-sm mb-2">
+                  {errorMessage}
+                </div>
+              )}
 
               <button
                 onClick={handleGenerate}

@@ -1,4 +1,3 @@
-// firestoreCache.js
 import { db } from "../firebase";
 import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 
@@ -33,7 +32,41 @@ function getWeightTolerance(weightGrams) {
   return 50;
 }
 
+function isValidForm(formData) {
+  const requiredFields = [
+    "surface",
+    "tempStyle",
+    "weightValue",
+    "weightUnit",
+    "cut",
+    "doneness",
+  ];
+  for (const field of requiredFields) {
+    if (!formData[field] || formData[field].toString().trim() === "")
+      return false;
+  }
+
+  if (
+    formData.cut === "Other" &&
+    (!formData.customCut || formData.customCut.trim() === "")
+  )
+    return false;
+  if (
+    formData.surface === "Stove" &&
+    (!formData.pan || formData.pan.trim() === "")
+  )
+    return false;
+  if (isNaN(parseFloat(formData.weightValue))) return false;
+
+  return true;
+}
+
 export async function getCachedInstructions(formData) {
+  if (!isValidForm(formData)) {
+    console.warn("Invalid form data:", formData);
+    return null;
+  }
+
   const cut = normalizeCut(formData);
 
   const q = query(
