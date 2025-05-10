@@ -5,8 +5,9 @@ const collectionRef = collection(db, "cookingInstructions");
 const logsRef = collection(db, "instructionLogs");
 
 function normalizeCut(formData) {
+  if (!formData.cut) return "";
   return formData.cut === "Other"
-    ? formData.customCut.trim().toLowerCase()
+    ? formData.customCut?.trim().toLowerCase?.() || ""
     : formData.cut.toLowerCase();
 }
 
@@ -33,32 +34,57 @@ function getWeightTolerance(weightGrams) {
 }
 
 function isValidForm(formData) {
-  const requiredFields = [
-    "surface",
-    "tempStyle",
-    "weightValue",
-    "weightUnit",
-    "cut",
-    "doneness",
-  ];
-  for (const field of requiredFields) {
-    if (!formData[field] || formData[field].toString().trim() === "")
+  const { type } = formData;
+
+  if (type === "steak") {
+    const requiredFields = [
+      "surface",
+      "tempStyle",
+      "weightValue",
+      "weightUnit",
+      "cut",
+      "doneness",
+    ];
+    for (const field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === "")
+        return false;
+    }
+
+    if (
+      formData.cut === "Other" &&
+      (!formData.customCut || formData.customCut.trim() === "")
+    )
       return false;
+    if (
+      formData.surface === "Stove" &&
+      (!formData.pan || formData.pan.trim() === "")
+    )
+      return false;
+    if (isNaN(parseFloat(formData.weightValue))) return false;
+
+    return true;
   }
 
-  if (
-    formData.cut === "Other" &&
-    (!formData.customCut || formData.customCut.trim() === "")
-  )
-    return false;
-  if (
-    formData.surface === "Stove" &&
-    (!formData.pan || formData.pan.trim() === "")
-  )
-    return false;
-  if (isNaN(parseFloat(formData.weightValue))) return false;
+  if (type === "wings") {
+    const requiredFields = [
+      "surface",
+      "tempStyle",
+      "weightValue",
+      "weightUnit",
+      "wingSize",
+      "doneness",
+      "preSeasoned",
+    ];
+    for (const field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === "")
+        return false;
+    }
+    if (isNaN(parseFloat(formData.weightValue))) return false;
 
-  return true;
+    return true;
+  }
+
+  return false; // Unknown type
 }
 
 export async function getCachedInstructions(formData) {
@@ -71,6 +97,7 @@ export async function getCachedInstructions(formData) {
 
   const q = query(
     collectionRef,
+    where("type", "==", formData.type),
     where("surface", "==", formData.surface),
     where("tempStyle", "==", formData.tempStyle),
     where("cut", "==", cut),
@@ -128,6 +155,7 @@ export async function cacheInstructions(formData, instructions) {
   if (existing) return;
 
   await addDoc(collectionRef, {
+    type: formData.type,
     surface: formData.surface,
     tempStyle: formData.tempStyle,
     weightValue: formData.weightValue,
