@@ -69,17 +69,50 @@ export default function Main() {
             {/* Temp Style */}
             <div className="flex flex-col">
               <label className="text-sm font-medium mb-1">
-                Temperature Tips
+                Cooking Temperature Style
               </label>
-              <select
-                name="tempStyle"
-                value={formData.tempStyle}
-                onChange={handleChange}
-                className="p-2 text-black rounded"
-              >
-                <option value="Knob">Low / Medium / High</option>
-                <option value="Exact">Exact Temp (°F or °C)</option>
-              </select>
+              <p className="helper-text">
+                This tells us how you refer to heat when cooking — either using
+                knobs like “medium heat,” or exact temperatures like 375°F.
+              </p>
+              <div className="temp-options">
+                <label
+                  className={`temp-option ${formData.tempStyle === "Knob" ? "selected" : ""}`}
+                >
+                  <input
+                    type="radio"
+                    name="tempStyle"
+                    value="Knob"
+                    checked={formData.tempStyle === "Knob"}
+                    onChange={handleChange}
+                  />
+                  <div>
+                    <strong>Knob Style</strong>
+                    <div className="temp-desc">
+                      Use Low / Medium / High heat based on your stove or BBQ
+                      knob.
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  className={`temp-option ${formData.tempStyle === "Exact" ? "selected" : ""}`}
+                >
+                  <input
+                    type="radio"
+                    name="tempStyle"
+                    value="Exact"
+                    checked={formData.tempStyle === "Exact"}
+                    onChange={handleChange}
+                  />
+                  <div>
+                    <strong>Exact Temperature</strong>
+                    <div className="temp-desc">
+                      You’ll enter the temperature in °F or °C for precision.
+                    </div>
+                  </div>
+                </label>
+              </div>
             </div>
 
             {/* Weight */}
