@@ -7,37 +7,17 @@ const openai = new OpenAI({
 });
 
 export async function generateCookingInstructions(formData) {
-  const cached = await getCachedInstructions({ ...formData, type: "steak" });
-  if (cached) return cached;
-
-  const {
-    surface,
-    tempStyle,
-    weightValue,
-    weightUnit,
-    cut,
-    customCut,
-    doneness,
-    pan,
-  } = formData;
-  const finalCut = cut === "Other" ? customCut : cut;
-  const prompt = `You're a helpful cooking assistant. Provide beginner-friendly, step-by-step instructions for cooking a ${weightValue}${weightUnit} ${finalCut} steak on a ${surface}, aiming for ${doneness} doneness.
-Temperature guidance style: ${tempStyle}.
-${surface === "Stove" ? `Pan type: ${pan}.` : ""}
-
-Be clear and concise.`;
-
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
+    const response = await fetch("/api/generateInstructions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
     });
-    const result = response.choices[0].message.content.trim();
-    await cacheInstructions({ ...formData, type: "steak" }, result);
-    return result;
+
+    const data = await response.json();
+    return data.instructions;
   } catch (err) {
-    console.error("OpenAI Error:", err);
+    console.error("API Error:", err);
     return "Something went wrong while fetching instructions.";
   }
 }
