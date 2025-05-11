@@ -209,7 +209,7 @@ export default function SteakForm() {
         disabled={loading}
         className="generate-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition"
       >
-        {loading ? "🔥 Generating..." : "Generate Instructions"}
+        {loading ? "Generating..." : "Generate Instructions"}
       </button>
 
       {showModal && (
