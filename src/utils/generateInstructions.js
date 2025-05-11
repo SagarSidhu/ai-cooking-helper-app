@@ -1,18 +1,17 @@
 import { getCachedInstructions, cacheInstructions } from "./firestoreCache";
 
+const API_URL = import.meta.env.PROD ? "https://fromzerotochef.com" : "";
+
 export async function generateCookingInstructions(formData) {
   const cached = await getCachedInstructions({ ...formData, type: "steak" });
   if (cached) return cached;
 
   try {
-    const response = await fetch(
-      "https://fromzerotochef.com/api/generateInstructions",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      }
-    );
+    const response = await fetch(`${API_URL}/api/generateInstructions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
 
     const data = await response.json();
     const result = data.instructions;
@@ -38,14 +37,11 @@ export async function generateWingsInstructions(formData) {
   if (cached) return cached;
 
   try {
-    const response = await fetch(
-      "https://fromzerotochef.com/api/generateInstructions",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      }
-    );
+    const response = await fetch(`${API_URL}/api/generateInstructions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
 
     const data = await response.json();
     const result = data.instructions;
