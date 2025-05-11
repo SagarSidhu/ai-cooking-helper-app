@@ -1,35 +1,15 @@
 import { OpenAI } from "openai";
-import Cors from "cors";
-
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};
-
-const cors = Cors({
-  methods: ["POST", "OPTIONS"],
-  origin: "*",
-});
-
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-}
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req, res) {
-  await runMiddleware(req, res, cors);
+  // ✅ Set headers immediately
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
-    return res.status(200).end();
+    return res.status(200).end(); // Preflight handled
   }
 
   if (req.method !== "POST") {
@@ -100,21 +80,16 @@ Be practical and concise.`;
       return res.status(400).json({ error: "Invalid type" });
     }
 
-    try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7,
-      });
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+    });
 
-      const instructions = response.choices[0].message.content.trim();
-      res.status(200).json({ instructions });
-    } catch (err) {
-      console.error("OpenAI error:", err);
-      res.status(500).json({ error: "OpenAI call failed" });
-    }
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    const instructions = response.choices[0].message.content.trim();
+    res.status(200).json({ instructions });
+  } catch (err) {
+    console.error("OpenAI error:", err);
+    res.status(500).json({ error: "OpenAI call failed" });
   }
 }
