@@ -7,7 +7,7 @@ export async function generateCookingInstructions(formData) {
   if (cached) return cached;
 
   try {
-    const response = await fetch(`${API_URL}/api/generateInstructions`, {
+    const response = await fetch(`api/generateInstructions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -37,7 +37,7 @@ export async function generateWingsInstructions(formData) {
   if (cached) return cached;
 
   try {
-    const response = await fetch(`${API_URL}/api/generateInstructions`, {
+    const response = await fetch(`api/generateInstructions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
